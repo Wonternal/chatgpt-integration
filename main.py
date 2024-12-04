@@ -1,4 +1,4 @@
-from openai import OpenAI
+import openai
 from fastapi import FastAPI, Form, Request, WebSocket
 from typing import Annotated
 from fastapi.templating import Jinja2Templates
@@ -8,9 +8,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-openai = OpenAI(
-    api_key = os.getenv('OPENAI_API_SECRET_KEY')
-)
+openai.api_key = os.getenv('OPENAI_API_SECRET_KEY')
 
 app = FastAPI()
 
