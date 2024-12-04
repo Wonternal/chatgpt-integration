@@ -1,10 +1,12 @@
 import openai
 from fastapi import FastAPI, Form, Request, WebSocket
+from fastapi.responses import JSONResponse
 from typing import Annotated
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 import os
 from dotenv import load_dotenv
+import traceback
 
 load_dotenv()
 
@@ -53,7 +55,14 @@ async def chat(websocket: WebSocket):
             chat_responses.append(ai_response)
 
         except Exception as e:
-            await websocket.send_text(f'Error: {str(e)}')
+            # Obtener el traceback completo
+            error_details = traceback.format_exc()
+            
+            # Enviar el mensaje de error detallado al websocket
+            await websocket.send_text(f'Error: {error_details}')
+            
+            # Imprimir el traceback completo en la consola para depuración
+            print(error_details)
             break
 
 
@@ -80,23 +89,21 @@ async def chat(request: Request, user_input: Annotated[str, Form()]):
 async def image_page(request: Request):
     return templates.TemplateResponse("image.html", {"request": request})
 
-
-@app.post("/image", response_class=HTMLResponse)
+@app.post("/image", response_class=JSONResponse)
 async def create_image(request: Request, user_input: Annotated[str, Form()]):
 
+    # Llamar a la API de OpenAI para generar la imagen
     response = openai.images.generate(
         prompt=user_input,
         n=1,
-        size="256x256"
+        size="512x512"
     )
 
+    # Obtener la URL de la imagen generada
     image_url = response.data[0].url
-    return templates.TemplateResponse("image.html", {"request": request, "image_url": image_url})
 
-
-
-
-
+    # Retornar la URL de la imagen en formato JSON
+    return JSONResponse(content={"image_url": image_url})
 
 
 
