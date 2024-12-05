@@ -75,7 +75,7 @@ async def chat(request: Request, user_input: Annotated[str, Form()]):
     response = openai.chat.completions.create(
         model='gpt-3.5-turbo',
         messages=chat_log,
-        temperature=0.6
+        temperature=0.8
     )
 
     bot_response = response.choices[0].message.content
