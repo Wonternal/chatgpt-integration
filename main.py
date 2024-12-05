@@ -24,13 +24,12 @@ async def chat_page(request: Request):
 
 
 chat_log = [{'role': 'system',
-             'content': 'You tell jokes.'
+             'content': 'Di chistes.'
              }]
 
 
 @app.websocket("/ws")
 async def chat(websocket: WebSocket):
-
     await websocket.accept()
 
     while True:
@@ -39,19 +38,20 @@ async def chat(websocket: WebSocket):
         chat_responses.append(user_input)
 
         try:
+            # Llamada a OpenAI sin stream
             response = openai.chat.completions.create(
                 model='gpt-3.5-turbo',
                 messages=chat_log,
                 temperature=1,
-                stream=True
             )
 
-            ai_response = ''
+            # Obtener la respuesta completa (sin fragmentos)
+            ai_response = response.choices[0].message.content
 
-            for chunk in response:
-                if chunk.choices[0].delta.content is not None:
-                    ai_response += chunk.choices[0].delta.content
-                    await websocket.send_text(chunk.choices[0].delta.content)
+            # Enviar la respuesta completa al cliente
+            await websocket.send_text(ai_response)
+
+            # Guardar la respuesta en el historial
             chat_responses.append(ai_response)
 
         except Exception as e:
@@ -64,6 +64,8 @@ async def chat(websocket: WebSocket):
             # Imprimir el traceback completo en la consola para depuración
             print(error_details)
             break
+
+
 
 
 @app.post("/", response_class=HTMLResponse)

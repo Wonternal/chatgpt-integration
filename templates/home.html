@@ -1,15 +1,20 @@
 {% include 'layout.html' %}
 
 <div class="container mt-5">
-    <h3 class="text-center mb-4" style="font-family: 'Arial', sans-serif; color: #4a90e2; font-weight: bold">ChatGPT 3.5</h3>
+    <h3 class="text-center mb-4" style="font-family: 'Arial', sans-serif; color: #4a90e2; font-weight: bold">ChatGPT 3.5
+    </h3>
 
     <div>
         <div class="card text-center mt-3 shadow-lg" style="border-radius: 15px; background-color: #f7f7f7">
-            <div class="card-header" style="background-color: #4a90e2; color: white; font-size: 1.5em; font-weight: bold">Historial del chat:</div>
-            <div class="card-body chat-history" id="chatHistory" style="max-height: 300px; overflow-y: auto; background-color: #fff">
+            <div class="card-header"
+                style="background-color: #4a90e2; color: white; font-size: 1.5em; font-weight: bold">Historial del chat:
+            </div>
+            <div class="card-body chat-history" id="chatHistory"
+                style="max-height: 300px; overflow-y: auto; background-color: #fff">
                 <!-- auto populate here -->
                 {% for response in chat_responses %}
-                <div class="{{ 'chat-message user-input' if loop.index0 is even else 'chat-message ai-response' }}">{{ response }}</div>
+                <div class="{{ 'chat-message user-input' if loop.index0 is even else 'chat-message ai-response' }}">{{
+                    response }}</div>
                 {% endfor %}
             </div>
         </div>
@@ -17,14 +22,10 @@
 
     <form class="container mt-4" id="footer" style="margin: 0 auto">
         <div class="input-group mb-3">
-            <input
-                class="form-control col-9"
-                placeholder="Escribe un mensaje para ChatGPT..."
-                id="userInput"
-                required
-                style="font-size: 1.1em"
-            />
-            <button class="btn btn-outline-primary col-3" type="button" id="sendButton" style="font-size: 1.1em; font-weight: bold">
+            <input class="form-control col-9" placeholder="Escribe un mensaje para ChatGPT..." id="userInput" required
+                style="font-size: 1.1em" />
+            <button class="btn btn-outline-primary col-3" type="button" id="sendButton"
+                style="font-size: 1.1em; font-weight: bold">
                 Enviar
             </button>
         </div>
@@ -40,21 +41,23 @@
     }
 
     var ws = new WebSocket(websocketString);
+
     ws.onmessage = function (event) {
-    var message = event.data.trim(); // Eliminar espacios al inicio y final del mensaje
+        var message = event.data.trim(); // Eliminar espacios al inicio y final
 
-    // Crear un nuevo div para cada mensaje completo del AI
-    var messageDiv = document.createElement("div");
-    messageDiv.className = "chat-message ai-response"; // Clase para estilizar
-    messageDiv.textContent = message; // Asignar el mensaje completo
-    chatHistory.appendChild(messageDiv); // Añadir el mensaje al historial del chat
+        // Crear el div para la respuesta del AI
+        var messageDiv = document.createElement("div");
+        messageDiv.className = "chat-message ai-response"; // Clase para estilizar
+        messageDiv.textContent = message; // Mostrar mensaje completo
+        chatHistory.appendChild(messageDiv); // Añadir el mensaje completo al historial del chat
 
-    // Actualizar referencia al último div del mensaje
-    lastUserMessageDiv = messageDiv; 
-    isNewUserInput = false; // Reiniciar la bandera, mensaje completo recibido
-};
+        // Hacer scroll al final del chat
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    };
 
-
+    // Enviar mensaje cuando se hace clic en el botón "Enviar"
+    var sendButton = document.getElementById("sendButton");
+    var userInput = document.getElementById("userInput");
 
     sendButton.onclick = function () {
         var message = userInput.value.trim();
@@ -64,12 +67,10 @@
             userInputDiv.textContent = message;
             chatHistory.appendChild(userInputDiv);
 
-            chatHistory.scrollTop = chatHistory.scrollHeight;
+            chatHistory.scrollTop = chatHistory.scrollHeight; // Hacer scroll al final
 
-            ws.send(message);
-            userInput.value = "";
-            isNewUserInput = true; // Set the flag as it's a new user input
-            lastUserMessageDiv = null; // Prepare for the next message
+            ws.send(message); // Enviar mensaje al servidor
+            userInput.value = ""; // Limpiar el campo de texto
         }
     };
 </script>

@@ -13,7 +13,7 @@
                     <p style="font-size: 1.2em; color: #4a90e2">Cargando...</p>
                 </div>
                 <!-- Contenedor de la imagen -->
-                <div id="image-container" style="display: none; margin-top: 20px">
+                <div id="image-container" style="display: none">
                     <img id="generated-image" src="" alt="Imagen generada" class="img-fluid" />
                 </div>
             </div>
@@ -73,7 +73,23 @@
 
 <!-- CSS para el spinner de carga -->
 <style>
-    /* Estilos para el círculo de carga (spinner) */
+    /* Contenedor de la imagen */
+    #image-container {
+        display: none;
+        max-width: 30vw; /* 80% del ancho de la pantalla */
+        max-height: 60vh; /* 80% de la altura de la pantalla */
+        overflow: hidden;
+        margin: 0 auto; /* Centrar horizontalmente */
+        text-align: center; /* Centrar la imagen dentro del contenedor */
+    }
+
+    #generated-image {
+        width: 100%; /* Hace que la imagen ocupe el 100% del contenedor */
+        height: 100%; /* Ajusta la imagen al contenedor */
+        object-fit: contain; /* Mantiene la relación de aspecto de la imagen */
+    }
+
+    /* Spinner de carga */
     .spinner {
         border: 4px solid #f3f3f3; /* Gris claro */
         border-top: 4px solid #4a90e2; /* Color azul para la parte superior */
