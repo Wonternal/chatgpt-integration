@@ -42,7 +42,7 @@ async def chat(websocket: WebSocket):
             response = openai.chat.completions.create(
                 model='gpt-3.5-turbo',
                 messages=chat_log,
-                temperature=0.6,
+                temperature=1,
                 stream=True
             )
 
